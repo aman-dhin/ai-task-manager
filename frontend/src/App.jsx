@@ -1,76 +1,72 @@
-import Employeemanage from "./components/Employeemanage.jsx";
+import React, { useEffect, useState } from "react";
 import Header from "./components/Header.jsx";
-
-import React, { useEffect, useState } from 'react'
+import Employeemanage from "./components/Employeemanage.jsx";
 import Taskmanagement from "./components/Taskmanagement.jsx";
 import { TaskBoard } from "./components/Employeetabs.jsx";
- 
+
 const App = () => {
+  const [employees, setEmployees] = useState([]);
+  const [taskList, setTaskList] = useState([]);
+  const [error, setError] = useState(null);
 
-   const [employees,setemployees] =useState([]);
-  const [Tasklist,setTasklist] =useState([]);
-   const [error,seterror] =useState(null);
-    
+  // Fetch employees
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch("http://localhost:5500/api/emp/emplist");
+      if (!response.ok) throw new Error("Failed to fetch employees");
+      const data = await response.json();
+      setEmployees(data);
+      console.log("Employees:", data);
+    } catch (err) {
+      setError(err.message);
+      console.error(err);
+    }
+  };
 
-  useEffect(()=>{
-    fetch("http://localhost:5500/api/emp/emplist")
-    .then((response)=>{
-      if(!response.ok){
-        throw new Error ("failed  to fetch employee")
-       
-       
-      }
-      return response.json("");
-    })
-    .then( (data)=>{
-      setemployees(data);
-      console.log("emp data",data);
-      
+  // Fetch tasks
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch("http://localhost:5500/api/task/getTaskList");
+      if (!response.ok) throw new Error("Failed to fetch tasks");
+      const data = await response.json();
+      setTaskList(data);
+      console.log("Tasks:", data);
+    } catch (err) {
+      setError(err.message);
+      console.error(err);
+    }
+  };
 
-    })
-    .catch(()=>{
-       seterror(error.message);
-    })
-  },[]);
-  useEffect(()=>{
-    fetch("http://localhost:5500/api/task/getTaskList")
-    .then((response)=>{
-      if(!response.ok){
-        throw new Error ("failed  to fetch employee")
-       
-       
-      }
-      return response.json("");
-    })
-    .then( (data)=>{
-      setTasklist(data);
-     // console.log("emp data",data);
-      
+  // Fetch both on mount
+  useEffect(() => {
+    fetchEmployees();
+    fetchTasks();
+  }, []);
 
-    })
-    .catch((Error)=>{
-       seterror(Error.message);
-    })
-  },[]);
   return (
-    <div className="bg-gray-100 h-screen">
-    <Header/>
-    <div className=" w-10/12 m-auto flex justify-between">
-    
-     <Employeemanage/>
-      <Taskmanagement employee={employees}/>
-     
-    
-    
+    <div className="bg-gray-100 min-h-screen">
+      <Header />
+
+      <div className="w-10/12 m-auto flex justify-between gap-5 mt-5">
+        {/* Employee Management */}
+        <Employeemanage fetchEmployees={fetchEmployees} />
+
+        {/* Task Management */}
+        <Taskmanagement employee={employees} fetchTasks={fetchTasks} />
+      </div>
+
+      {/* Task Board */}
+      <div className="w-10/12 m-auto mt-8">
+        <TaskBoard taskList={taskList} refreshTasks={fetchTasks} />
+      </div>
+
+      {error && (
+        <div className="text-red-500 text-center mt-5">
+          <p>Error: {error}</p>
+        </div>
+      )}
     </div>
+  );
+};
 
-    <TaskBoard employees={employees} taskList={Tasklist}/>
-    
-    
-     </div>
-     
-   
-  )
-}
-
-export default App
+export default App;

@@ -1,49 +1,45 @@
 import axios from "axios";
 import React, { useState } from "react";
 
-const Taskmanagement = ({ employee }) => {
+const Taskmanagement = ({ employee, fetchTasks }) => {
   const [taskTitle, settaskTitle] = useState("");
   const [Taskdesc, setTaskdesc] = useState("");
   const [assignedemp, setassignedemp] = useState("");
   const [suggestions, setsuggestions] = useState([]);
- 
 
-  // Auto-completion suggestion API
-  const handleTasksugggesstion = async (e) => {
+  // Fetch AI suggestions for task title
+  const handleTaskSuggestion = async (e) => {
     const value = e.target.value;
     settaskTitle(value);
 
-    if (value.length > 3) {
-      try {
-        const response = await axios.post(
-          "http://localhost:5500/api/task/suggest",
-          { input: value }
-        );
-        setsuggestions(response.data.suggestions || []);
-      } catch (error) {
-        console.log("Error while fetching suggestions:", error);
-      }
-    } else {
-      setsuggestions([]);
+    try {
+      const response = await axios.post(
+        "http://localhost:5500/api/task/suggest",
+        { input: value }
+      );
+      setsuggestions(response.data.suggestions || []);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error.response?.data?.error || error.message);
+      setsuggestions([]); // fallback: no suggestions
     }
   };
 
-  // Create task
+  // Assign task
   const Handleassigntask = async () => {
+    if (!taskTitle || !Taskdesc || !assignedemp) return alert("Fill all fields!");
     try {
       await axios.post("http://localhost:5500/api/task/create", {
         taskTitle,
         Taskdesc,
         empname: assignedemp,
       });
-
-      // Reset state
       settaskTitle("");
       setTaskdesc("");
       setassignedemp("");
       setsuggestions([]);
+      fetchTasks(); // refresh tasks
     } catch (error) {
-      console.error("Error creating a task :", error);
+      console.error("Error creating task:", error);
     }
   };
 
@@ -51,23 +47,21 @@ const Taskmanagement = ({ employee }) => {
     <div className="task-wrapper bg-white shadow-md rounded p-5 w-7/12">
       <h2 className="text-center text-3xl font-semibold mb-5">Assign Task</h2>
 
-      <div className="input-group mb-4">
-        <label className="block"> Enter Task Title </label>
+      {/* Task Title with AI Suggestions */}
+      <div className="input-group mb-4 relative">
+        <label className="block">Task Title</label>
         <input
           type="text"
-          placeholder=" Enter Task Title "
+          value={taskTitle}
+          onChange={handleTaskSuggestion}
           className="w-full border p-2"
-          value={taskTitle}               // ✅ controlled input
-          onChange={handleTasksugggesstion} // ✅ use suggestion function
         />
-
-        {/* ✅ Suggestion dropdown */}
         {suggestions.length > 0 && (
-          <ul className="border p-2 bg-gray-100 mt-2 rounded">
+          <ul className="absolute bg-white border w-full mt-1 max-h-40 overflow-y-auto z-50">
             {suggestions.map((s, idx) => (
               <li
                 key={idx}
-                className="p-1 cursor-pointer hover:bg-gray-200"
+                className="p-2 cursor-pointer hover:bg-gray-200"
                 onClick={() => {
                   settaskTitle(s);
                   setsuggestions([]);
@@ -81,39 +75,36 @@ const Taskmanagement = ({ employee }) => {
       </div>
 
       <div className="input-group mb-4">
-        <label className="block"> Enter Task Description </label>
+        <label className="block">Task Description</label>
         <textarea
-          placeholder=" Enter Task description "
-          className="w-full border p-2"
           value={Taskdesc}
           onChange={(e) => setTaskdesc(e.target.value)}
+          className="w-full border p-2"
         />
       </div>
 
       <div className="input-group mb-4">
-        <label className="block"> Select Employee </label>
+        <label className="block">Assign Employee</label>
         <select
-          className="border w-full p-2"
           value={assignedemp}
           onChange={(e) => setassignedemp(e.target.value)}
+          className="w-full border p-2"
         >
-          <option value=""> select employee </option>
-          {employee.map((emp) => (
-            <option key={emp.empid} value={emp.empname}>
+          <option value="">Select Employee</option>
+          {employee.map((emp, index) => (
+            <option key={emp.empid + index} value={emp.empname}>
               {emp.empname}
             </option>
           ))}
         </select>
       </div>
 
-      <div className="btn-group text-center">
-        <button
-          onClick={Handleassigntask} // ✅ now button works
-          className="w-1/2 bg-indigo-500 text-white py-3"
-        >
-          Assign Task
-        </button>
-      </div>
+      <button
+        onClick={Handleassigntask}
+        className="w-full bg-indigo-500 text-white py-3 rounded"
+      >
+        Assign Task
+      </button>
     </div>
   );
 };

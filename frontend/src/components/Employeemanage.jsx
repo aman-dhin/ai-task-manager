@@ -4,15 +4,15 @@ import React, { useState } from 'react'
 
 const Employeemanage = () => {
 
-  const [empId,setEmpId]=useState("");
-  const [empName,setempName] =useState("");
+  const [empid,setEmpId]=useState("");
+  const [empname,setempName] =useState("");
   const [empSkills,setempSkills]=useState("");
 
   const handleAddemp = async (e)=>{
     e.preventDefault();
 
     try {
-      const res =await axios.post("http://localhost:5500/api/emp/create",{empId,empName,empSkills});
+      const res =await axios.post("http://localhost:5500/api/emp/create",{empid,empname,empSkills});
         setEmpId("");
         setempName("");
         setempSkills("");
@@ -26,6 +26,8 @@ const Employeemanage = () => {
     }
 
   }
+  
+  
   return (
     <div className='emp-wrapper bg-white shadow-md rounded p-5 w-1/3'>
        <h2 className='text-center text-3xl font-semibold mb-5'>Add Employee</h2>
@@ -34,13 +36,13 @@ const Employeemanage = () => {
         <input type="text"
          placeholder=' Enter Emp Id' 
          className=' w-full border p-2'
-         value={empId}
+         value={empid}
          onChange={(e)=> setEmpId(e.target.value)} />
         </div>
         <div className='input-group mb-4'>  
         <label className='block' > Enter Emp Name </label>  
         <input type="text" placeholder=' Enter EMP NAme' className=' w-full border p-2'
-          value={empName}
+          value={empname}
          onChange={(e)=> setempName(e.target.value)} />
         </div>
         <div className='input-group mb-4 '>  
@@ -56,7 +58,10 @@ const Employeemanage = () => {
             >
             
              Add  NEW  Emp</button>
+
            </div>
+         
+     
     </div>
   )
 }

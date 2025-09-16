@@ -1,5 +1,5 @@
 const express =require('express');
-const { createemp ,getallemp } = require('../Controller/Empcontroller');
+const { createemp ,getallemp,deletemp } = require('../Controller/Empcontroller');
 const router =express.Router();
 
 router.get("/emplist",getallemp);    
