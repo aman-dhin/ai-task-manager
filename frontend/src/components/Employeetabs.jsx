@@ -11,7 +11,7 @@ export const TaskBoard = ({ taskList, refreshTasks }) => {
   const handleDelete = async (id) => {
     if (!id) return console.error("Task ID is undefined!", id);
     try {
-      await axios.delete(`http://localhost:5500/api/task/delete/${id}`);
+      await axios.delete(`https://ai-task-manager-backend-zpcf.onrender.com/api/task/delete/${id}`);
       refreshTasks();
     } catch (error) {
       console.error("Error deleting task:", error.response?.data || error.message);
@@ -37,7 +37,7 @@ export const TaskBoard = ({ taskList, refreshTasks }) => {
     }
 
     try {
-      await axios.put(`http://localhost:5500/api/task/update/${taskId}`, {
+      await axios.put(`https://ai-task-manager-backend-zpcf.onrender.com/api/task/update/${taskId}`, {
         taskTitle: editTitle,
         Taskdesc: editDesc,
         empname: editEmp,
