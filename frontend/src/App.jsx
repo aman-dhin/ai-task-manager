@@ -12,7 +12,7 @@ const App = () => {
   // Fetch employees
   const fetchEmployees = async () => {
     try {
-      const response = await fetch("http://localhost:5500/api/emp/emplist");
+      const response = await fetch("https://ai-task-manager-backend-zpcf.onrender.com/api/emp/emplist");
       if (!response.ok) throw new Error("Failed to fetch employees");
       const data = await response.json();
       setEmployees(data);
@@ -26,7 +26,7 @@ const App = () => {
   // Fetch tasks
   const fetchTasks = async () => {
     try {
-      const response = await fetch("http://localhost:5500/api/task/getTaskList");
+      const response = await fetch("https://ai-task-manager-backend-zpcf.onrender.com/api/task/getTaskList");
       if (!response.ok) throw new Error("Failed to fetch tasks");
       const data = await response.json();
       setTaskList(data);
