@@ -28,7 +28,7 @@ const Taskmanagement = ({ employee, fetchTasks }) => {
   const Handleassigntask = async () => {
     if (!taskTitle || !Taskdesc || !assignedemp) return alert("Fill all fields!");
     try {
-      await axios.post("http://localhost:5500/api/task/create", {
+      await axios.post("https://ai-task-manager-backend-zpcf.onrender.com/api/task/create", {
         taskTitle,
         Taskdesc,
         empname: assignedemp,
