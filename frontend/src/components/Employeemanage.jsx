@@ -12,7 +12,7 @@ const Employeemanage = () => {
     e.preventDefault();
 
     try {
-      const res =await axios.post("http://localhost:5500/api/emp/create",{empid,empname,empSkills});
+      const res =await axios.post("https://ai-task-manager-backend-zpcf.onrender.com/api/emp/create",{empid,empname,empSkills});
         setEmpId("");
         setempName("");
         setempSkills("");
