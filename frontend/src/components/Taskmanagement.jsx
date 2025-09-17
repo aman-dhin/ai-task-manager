@@ -14,7 +14,7 @@ const Taskmanagement = ({ employee, fetchTasks }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5500/api/task/suggest",
+        "https://ai-task-manager-backend-zpcf.onrender.com/api/task/suggest",
         { input: value }
       );
       setsuggestions(response.data.suggestions || []);
